@@ -59,6 +59,8 @@ export default function WorkCard({ onOpenProject, openProjectId }) {
 }
 
 function ProjectTile({ project, isActive, onOpen }) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div
       style={{
@@ -75,41 +77,32 @@ function ProjectTile({ project, isActive, onOpen }) {
       }}
       onMouseLeave={e => e.currentTarget.style.transform = 'none'}
     >
-      {/* Banner image — falls back to colored SVG if missing */}
+      {/* Banner */}
       <div style={{
         background: project.bgColor,
         height: 100,
         overflow: 'hidden',
         position: 'relative',
       }}>
-        <img
-          src={`/images/projects/${project.id}-banner.png`}
-          alt={project.title}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
-          onError={e => {
-            e.currentTarget.style.display = 'none';
-            e.currentTarget.nextSibling.style.display = 'flex';
-          }}
-        />
-        {/* SVG fallback — hidden by default, shown if image missing */}
-        <div style={{
-          display: 'none',
-          position: 'absolute',
-          inset: 0,
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: project.bgColor,
-        }}>
-          <ProjectThumbnail project={project} />
-        </div>
+        {!imgError ? (
+          <img
+            src={`/images/projects/${project.id}/${project.id}01.png`}
+            alt={project.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: project.bgColor,
+          }}>
+            <ProjectThumbnail project={project} />
+          </div>
+        )}
       </div>
 
-      {/* Project label */}
+      {/* Label */}
       <div style={{
         display: 'flex',
         alignItems: 'center',

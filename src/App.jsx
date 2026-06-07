@@ -1,5 +1,7 @@
-// src/App.jsx — FULL REPLACEMENT
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import useCursor from './hooks/useCursor';
+import CustomCursor from './components/CustomCursor';
 import Background from './components/Background';
 import NavBar from './components/NavBar';
 import Card from './components/Card';
@@ -25,17 +27,58 @@ const CARD_CONFIGS = {
   buildlog:   { title: '/build.log' },
 };
 
+// Spring config — feels physical, not floaty
+const SPRING = { type: 'spring', stiffness: 280, damping: 28, mass: 0.8 };
+
+// Card enter from right, exit to left+fade
+const cardVariants = {
+  initial: { opacity: 0, x: 60, scale: 0.97 },
+  animate: { opacity: 1, x: 0,  scale: 1,    transition: SPRING },
+  exit:    { opacity: 0, x: -40, scale: 0.96, transition: { duration: 0.18, ease: 'easeIn' } },
+};
+
 export default function App() {
+  useCursor();
   useCursorTrail();
 
-  const [openCards, setOpenCards] = useState(['guide', 'about']);
-  const [openProject, setOpenProject] = useState(null); // project id
+  const [openCards, setOpenCards]   = useState(['guide', 'about', 'contact', 'work', 'skills']);
+  const [openProject, setOpenProject] = useState(null);
   const [lovedCount] = useState(323);
+
+  const scrollRef  = useRef(null);   // the overflow-x container
+  const prevCount  = useRef(openCards.length);
+
+  // Auto-scroll right whenever a new card is added
+  useEffect(() => {
+    const isAdding = openCards.length > prevCount.current;
+    prevCount.current = openCards.length;
+
+    if (isAdding && scrollRef.current) {
+      // Small delay so the card has been inserted into the DOM
+      setTimeout(() => {
+        scrollRef.current.scrollTo({
+          left: scrollRef.current.scrollWidth,
+          behavior: 'smooth',
+        });
+      }, 60);
+    }
+  }, [openCards]);
+
+  // Also scroll right when a project detail opens
+  useEffect(() => {
+    if (openProject && scrollRef.current) {
+      setTimeout(() => {
+        scrollRef.current.scrollTo({
+          left: scrollRef.current.scrollWidth,
+          behavior: 'smooth',
+        });
+      }, 60);
+    }
+  }, [openProject]);
 
   function toggleCard(id) {
     setOpenCards(prev => {
       if (prev.includes(id)) {
-        // closing work card also closes project detail
         if (id === 'work') setOpenProject(null);
         return prev.filter(c => c !== id);
       } else {
@@ -53,7 +96,6 @@ export default function App() {
   function openProjectDetail(projectId) {
     sounds.click();
     setOpenProject(projectId);
-    // ensure work card is open
     if (!openCards.includes('work')) {
       setOpenCards(prev => [...prev, 'work']);
     }
@@ -64,7 +106,6 @@ export default function App() {
     setOpenProject(null);
   }
 
-  // Build ordered list: guide, about, contact, work, [project detail], skills, experience, buildlog
   const cardOrder = ['guide', 'about', 'contact', 'work', 'skills', 'experience', 'buildlog'];
 
   const CARD_CONTENT = {
@@ -79,16 +120,23 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      <CustomCursor />
       <Background />
 
       {/* Horizontal scrollable workspace */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        bottom: 52,
-        overflowX: 'auto',
-        overflowY: 'hidden',
-      }}>
+      <div
+        ref={scrollRef}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          bottom: 52,
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          // smooth momentum scroll on trackpads / touch
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
         <div style={{
           display: 'flex',
           flexDirection: 'row',
@@ -98,41 +146,69 @@ export default function App() {
           minWidth: 'max-content',
           height: '100%',
         }}>
-          {cardOrder.map(id => {
-            if (!openCards.includes(id)) return null;
-            const cfg = CARD_CONFIGS[id];
+          <AnimatePresence initial={false} mode="popLayout">
+            {cardOrder.map(id => {
+              if (!openCards.includes(id)) return null;
+              const cfg = CARD_CONFIGS[id];
 
-            // After work card, inject project detail card if open
-            if (id === 'work') {
+              if (id === 'work') {
+                return (
+                  <React.Fragment key="work-group">
+                    <motion.div
+                      key="work"
+                      variants={cardVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      layout
+                      layoutId="work"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <Card title={cfg.title} onClose={() => closeCard('work')}>
+                        {CARD_CONTENT['work']}
+                      </Card>
+                    </motion.div>
+
+                    <AnimatePresence mode="popLayout">
+                      {openProject && (
+                        <motion.div
+                          key={openProject}
+                          variants={cardVariants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          layout
+                          style={{ flexShrink: 0 }}
+                        >
+                          <ProjectDetailCard
+                            projectId={openProject}
+                            onClose={closeProject}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </React.Fragment>
+                );
+              }
+
               return (
-                <React.Fragment key="work-group">
-                  <Card
-                    title={cfg.title}
-                    onClose={() => closeCard('work')}
-                  >
-                    {CARD_CONTENT['work']}
+                <motion.div
+                  key={id}
+                  variants={cardVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  layout
+                  layoutId={id}
+                  style={{ flexShrink: 0 }}
+                >
+                  <Card title={cfg.title} onClose={() => closeCard(id)}>
+                    {CARD_CONTENT[id]}
                   </Card>
-                  {openProject && (
-                    <ProjectDetailCard
-                      key={openProject}
-                      projectId={openProject}
-                      onClose={closeProject}
-                    />
-                  )}
-                </React.Fragment>
+                </motion.div>
               );
-            }
-
-            return (
-              <Card
-                key={id}
-                title={cfg.title}
-                onClose={() => closeCard(id)}
-              >
-                {CARD_CONTENT[id]}
-              </Card>
-            );
-          })}
+            })}
+          </AnimatePresence>
         </div>
       </div>
 

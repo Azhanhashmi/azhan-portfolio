@@ -25,6 +25,10 @@ export default function SkillsCard() {
           <span style={{ fontWeight: 'bold', fontSize: 12, color: '#F5436D' }}>Tools: </span>
           <span style={{ fontSize: 12, color: '#555' }}>{skills.tools.join(', ')}</span>
         </li>
+        <li style={{ marginBottom: 10 }}>
+          <span style={{ fontWeight: 'bold', fontSize: 12, color: '#F5436D'  }}>AI & LLM: </span>
+          <span style={{ fontSize: 12, color: '#555' }}>{skills.ai.join(', ')}</span>
+        </li>
       </ul>
 
       {/* Pixel circles */}
@@ -45,6 +49,7 @@ export default function SkillsCard() {
         {[
           "I don't just use frameworks — I understand what's happening under the hood. That's what separates a builder from a copy-paster.",
           "I build full-stack, end-to-end. Design, frontend, backend, infra — I've touched every layer and I know which one is on fire.",
+          "I integrate AI at the infrastructure level — not just API calls, but custom vector search, local LLMs, and embedding pipelines built from scratch.",
         ].map((txt, i) => (
           <p key={i} style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #F5436D' }}>
             • {txt}

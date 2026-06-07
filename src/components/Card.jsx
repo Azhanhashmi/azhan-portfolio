@@ -1,4 +1,3 @@
-// src/components/Card.jsx — FULL REPLACEMENT
 import React, { useEffect } from 'react';
 import sounds from '../hooks/useSounds';
 
@@ -11,20 +10,15 @@ const cardStyles = `
     flex-shrink: 0;
     font-family: 'Univers LT Std', 'Share Tech Mono', monospace;
     box-shadow: 4px 4px 0 #1a1a1a;
-    animation: cardOpen 0.15s steps(3) forwards;
   }
 
   .card:hover {
     box-shadow: 6px 6px 0 #1a1a1a;
+    transition: box-shadow 0.15s ease;
   }
 
   .card.card--wide {
     width: 560px;
-  }
-
-  @keyframes cardOpen {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
   }
 
   .card-titlebar {
