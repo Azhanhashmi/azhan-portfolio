@@ -25,7 +25,7 @@ export default function AboutCard() {
         justifyContent: 'center',
       }}>
         <img
-          src="/src/images/about-me.png"
+          src="/images/about-me.png"
           alt="Azhan Hashmi"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           onError={e => { e.currentTarget.style.display = 'none'; }}

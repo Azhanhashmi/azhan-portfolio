@@ -20,7 +20,7 @@ export default function Background() {
       drawFallback(w, h);
 
       const bg = new Image();
-      bg.src = '/src/images/background.png';
+      bg.src = '/images/Background.png';
       bg.onload = () => {
         ctx.clearRect(0, 0, w, h);
         ctx.drawImage(bg, 0, 0, w, h);

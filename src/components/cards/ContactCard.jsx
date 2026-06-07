@@ -30,7 +30,7 @@ export default function ContactCard() {
         justifyContent: 'center',
       }}>
         <img
-          src="/src/images/contact.png"
+          src="/images/contact.png"
           alt="Contact"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           onError={e => { e.currentTarget.style.display = 'none'; }}

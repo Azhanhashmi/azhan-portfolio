@@ -53,7 +53,7 @@ export default function GuideCard() {
     <div>
       <div style={{ marginBottom: 12, overflow: 'hidden', border: '2px solid #1a1a1a', background: '#1a1a1a', height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img
-          src="/src/images/about-me.png"
+          src="/images/about-me.png"
           alt="Azhan Hashmi"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           onError={e => { e.currentTarget.style.display = 'none'; }}
