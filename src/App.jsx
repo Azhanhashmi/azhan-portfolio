@@ -119,33 +119,33 @@ export default function App() {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'visible', position: 'relative' }}>
       <CustomCursor />
       <Background />
 
       {/* Horizontal scrollable workspace */}
-      <div
-        ref={scrollRef}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          bottom: 52,
-          overflowX: 'auto',
-          overflowY: 'hidden',
-          // smooth momentum scroll on trackpads / touch
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          gap: 16,
-          padding: '40px 40px 20px 40px',
-          minWidth: 'max-content',
-          height: '100%',
-        }}>
+    <div
+  ref={scrollRef}
+  data-workspace
+  style={{
+    position: 'absolute',
+    inset: 0,
+    bottom: 52,
+    overflowX: 'auto',
+    overflowY: 'auto',   // ← was 'hidden', this is the main fix
+    scrollBehavior: 'smooth',
+    WebkitOverflowScrolling: 'touch',
+  }}
+>
+         <div style={{
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+  gap: 16,
+  padding: '40px 40px 20px 40px',
+  minWidth: 'max-content',
+  height: window.innerWidth < 768 ? 'auto' : '100%',
+}} className="workspace-inner">
           <AnimatePresence initial={false} mode="popLayout">
             {cardOrder.map(id => {
               if (!openCards.includes(id)) return null;
