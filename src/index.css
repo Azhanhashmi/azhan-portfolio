@@ -1,0 +1,59 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0e14;
+  --card-bg: #f5f0e8;
+  --card-border: #1a1a1a;
+  --pink: #ff2d78;
+  --yellow: #f5d020;
+  --cyan: #00e5ff;
+  --green: #39ff14;
+  --purple: #b44fff;
+  --text-dark: #1a1a1a;
+  --text-muted: #555;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-pixel: 'VT323', monospace;
+  --font-retro: 'Press Start 2P', monospace;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: none;
+  background: var(--bg);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pink);
+}
+
+/* Selection */
+::selection {
+  background: var(--pink);
+  color: white;
+}
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
